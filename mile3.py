@@ -58,7 +58,8 @@ for i in range(num_participants):
         spectral_crest_factor[i, repetition] = np.max(power) / np.mean(power)
 
 # Plot box plots for each spectral feature
-spectral_features = {
+plt.figure(figsize=(10, 8))
+for feature_name, feature_data in {
     "Average Power Spectrum": power_med,
     "Maximum Power Spectrum": power_max,
     "Minimum Power Spectrum": power_min,
@@ -69,17 +70,12 @@ spectral_features = {
     "Spectral Spread": spectral_spread,
     "Spectral Crest Factor": spectral_crest_factor,
     "Spectral Entropy": spectral_entropy
-}
-
-for feature_name, feature_data in spectral_features.items():
-    plt.figure(figsize=(8, 6))
-    for i in range(num_participants):
-        plt.boxplot(feature_data[i])
-        plt.xticks([1], [str(i)])
-        plt.title(feature_name + ' - Participant ' + str(i))
-        plt.xlabel('Repetition')
-        plt.ylabel('Value')
-        plt.show()
+}.items():
+    plt.boxplot(feature_data.T)
+    plt.title(feature_name)
+    plt.xlabel('Participant')
+    plt.ylabel('Feature Value')
+    plt.show()
 
 # 3D Scatter plot
 fig = plt.figure(figsize=(10, 8))
