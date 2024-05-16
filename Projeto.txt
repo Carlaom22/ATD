@@ -1,0 +1,9 @@
+Uma pasta onde tem do digito 0 ao 9 tem 50 sinais de audio.
+Usar audioread para ler -> informação do sinal como da frequência de amostragem [x, fs]
+Abrir sinais de forma automática -> for loops para percorrer as gravações todas 
+Funções que podem ajudar -> num2str, strcat
+Depois de abrir os ficheiros, fazer plot de um exemplo de cada digito.
+Eixo do tempo em segundos.
+n = 0:num(y-1)
+
+Retirar o silêncio do sinal (Parte em que a pessoa não pronunciou nada)
