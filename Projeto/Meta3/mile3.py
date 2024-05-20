@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 
 # Directory of the audio files
-directory = 'C:/Users/carli/OneDrive/ATD_23_24/01'
+directory = 'C:/Users/carli/OneDrive/ATD_23_24/Projeto/01'
 participant = "01"
 
 # Configuration
