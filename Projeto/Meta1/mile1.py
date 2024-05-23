@@ -3,13 +3,13 @@ import librosa
 import numpy as np
 import matplotlib.pyplot as plt
 
-# Directory containing the audio files
+# Diretório contendo os arquivos de áudio
 directory = 'C:/Users/carli/OneDrive/ATD_23_24/Projeto/01'
 participant = "01"
 iteration = 0
 num_repetitions = 50
 
-# Initializing lists to store audio features
+# Inicializando listas para armazenar as características de áudio
 max_amplitudes = []
 min_amplitudes = []
 energies = []
@@ -18,7 +18,7 @@ amplitude_ratios = []
 durations = []
 standard_deviations = []
 
-# Function to process audio files and extract features
+# Função para processar arquivos de áudio e extrair características
 def process_audio_files(directory, participant, iteration):
     for i in range(10):
         print(f"Data for number {i}")
@@ -28,17 +28,14 @@ def process_audio_files(directory, participant, iteration):
         amplitude_ratio = []
         energy = []
         duration_list = []
-        std_dev = []
+        std_dev_list = []  # Correção aqui para usar uma lista
 
         for repetition in range(num_repetitions):
-            # Construct the file path
             file_path = os.path.join(directory, f"{number}_{participant}_{repetition}.wav")
-            # Load the audio file
             audio, sr = librosa.load(file_path, sr=None)
 
-            # Calculate the duration of the original audio
             duration = len(audio) / sr
-            std_dev = np.std(audio)
+            std_dev_value = np.std(audio)  # Correção aqui para calcular o valor da desvio padrão
 
             if repetition == iteration:
                 namp = len(audio)
@@ -51,23 +48,23 @@ def process_audio_files(directory, participant, iteration):
                 plt.show()
                 print(f"The audio has a duration of {duration:.4f} seconds")
 
-            # Calculate the energy of the audio
+            # Calcular a energia 
             e = np.sum(np.abs(audio) ** 2)
             max_amplitude.append(np.max(audio))
             min_amplitude.append(np.min(audio))
             amplitude_ratio.append(np.max(np.abs(audio)) / np.mean(np.abs(audio)))
 
-            # Remove initial silence
+            # Remover o silêncio inicial
             threshold = np.max(audio) * 0.025
             first_index = np.argmax(audio > threshold)
             audio = audio[first_index:]
 
-            # Adjust the length of the audio
+            # Ajustar o comprimento do áudio
             num_zeros = sr - len(audio)
             if num_zeros > 0:
                 audio = np.pad(audio, (0, num_zeros), 'constant')
 
-            # Normalize the audio
+            # Normalizar o áudio
             audio = -1 + 2 * (audio - np.min(audio)) / (np.max(audio) - np.min(audio))
 
             if repetition == iteration:
@@ -81,58 +78,58 @@ def process_audio_files(directory, participant, iteration):
 
             energy.append(e)
             duration_list.append(duration)
-            std_dev.append(std_dev)
+            std_dev_list.append(std_dev_value)  # Correção aqui para adicionar o valor na lista
 
         max_amplitudes.append(max_amplitude)
         min_amplitudes.append(min_amplitude)
         amplitude_ratios.append(amplitude_ratio)
         energies.append(energy)
         durations.append(duration_list)
-        standard_deviations.append(std_dev)
+        standard_deviations.append(std_dev_list)  # Correção aqui para usar a lista de desvio padrão
 
         total_energy = np.sum(energy)
-        average_energy_total = total_energy / 50
+        average_energy_total = total_energy / num_repetitions
         average_energies.append(average_energy_total)
 
         print(f'The average total energy of the normalized audios without original silence for number {i} is: {average_energy_total:.4f}')
         print(f'The maximum amplitude of the original signal represented is {max_amplitude[iteration]:.4f}')
         print(f'The minimum amplitude of the original signal represented is {min_amplitude[iteration]:.4f}')
         print(f'The amplitude ratio of the original signal represented is {amplitude_ratio[iteration]:.4f}')
-        print(f'The standard deviation of the signal is {std_dev[iteration]:.4f}')
+        print(f'The standard deviation of the signal is {std_dev_list[iteration]:.4f}')  # Correção aqui para imprimir o valor correto
         print("--------------------------------------------------------")
 
-# Process the audio files
+# Processar os arquivos de áudio
 process_audio_files(directory, participant, iteration)
 
-# Convert lists to numpy arrays for plotting
+# Converter listas para arrays numpy para plotagem
 x = np.arange(10)
 max_amplitudes = np.array(max_amplitudes)
 energies = np.array(energies)
 standard_deviations = np.array(standard_deviations)
 
-# Plot maximum amplitudes
+# Plotar amplitudes máximas
 plt.figure()
 plt.plot(x, max_amplitudes, 'o')
 plt.xlabel('Numbers')
 plt.ylabel('Maximum Amplitudes')
 plt.show()
 
-# Plot energies
+# Plotar energias
 plt.figure()
 plt.plot(x, energies, 'o')
 plt.xlabel('Numbers')
 plt.ylabel('Energies')
 plt.show()
 
-# Plot standard deviations
+# Plotar desvios padrão
 plt.figure()
 plt.plot(x, standard_deviations, 'o')
 plt.xlabel('Numbers')
 plt.ylabel('Standard Deviations')
 plt.show()
 
-# 3D plot of the features
-colors = ['r', 'g', 'b', 'y', 'm', 'c', 'gray', 'brown', 'k', 'orange']
+# Plot 3D das características
+colors = ['r', 'g', 'b', 'y', 'm', 'c', 'gray', 'orange', 'brown', 'k']
 labels = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
 
 fig = plt.figure()

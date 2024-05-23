@@ -1,0 +1,38 @@
+figure('Position',[100,100,1200,1300]);
+
+vertical_spacing = 0.0005;
+horizontal_spacing = 0.05;
+subplot_height = 0.08;
+
+power_med = zeros(10, 50);
+power_max = zeros(10, 50); 
+power_min = zeros(10, 50);
+asymmetry = zeros(10, 50);
+curtose = zeros(10, 50);
+flatness = zeros(10, 50);
+spectralflux = zeros(10, 50);
+spectral_spread = zeros(10, 50);
+spectral_crest_factor = zeros(10, 50);
+spectral_entropy = zeros(10, 50);
+
+
+window_length = 250;
+overlap = 200;
+nfft = 1024;
+
+for i = 0:9
+    ypos = 1 - ((i + 1) * (subplot_height + vertical_spacing));
+    for repetition = 0:49
+        file_path = fullfile(directory + '\'+ participant+ '\' + int2str(i) + '_' + participant + '_' + int2str(repetition) + ".wav");
+        [audio_data, freq] = audioread(file_path);
+        [~, F, T, S] = spectrogram(audio_data(:,1),window_length, overlap, nfft, freq, 'yaxis');
+        positive_freq_idx = find(F >= 0);
+        power = mean(abs(S(positive_freq_idx,:)).^2);
+        
+        if (repetition == 0) 
+            numero = int2str(i);  
+            row = floor(i / 2) + 1; 
+            col = mod(i, 2) + 1;
+            subplot('Position', [(col - 1) * 0.5 + horizontal_spacing, (5 - row) * 0.2 +  (subplot_height + vertical_spacing), 0.4, subplot_height]);
+            spectrogram(audio_data(:,1), window_length, overlap, nfft, freq, 'yaxis');
+            title(numero,"FontWeight","bold")

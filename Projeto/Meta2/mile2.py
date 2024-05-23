@@ -41,7 +41,6 @@ max_amplitude = np.zeros((num_digits, num_repetitions))
 max_position = np.zeros((num_digits, num_repetitions))
 spectral_mean = np.zeros((num_digits, num_repetitions))
 entropies = np.zeros((num_digits, num_repetitions))
-SEFS = np.zeros((num_digits, num_repetitions))
 peak_frequencies = np.zeros((num_digits, num_repetitions))
 peak_magnitudes = np.zeros((num_digits, num_repetitions))
 spectral_contrast = np.zeros((num_digits, num_repetitions))
@@ -97,8 +96,6 @@ for digit in range(num_digits):
             total_power = np.sum(dft_audio_normal)
             relative_power[digit, repetition] = np.max(dft_audio_normal) / total_power
             spectral_contrast[digit, repetition] = np.std(np.diff(np.log(dft_audio_normal + 1e-12)))
-            energy_cumsum = np.cumsum(dft_audio_normal)
-            SEFS[digit, repetition] = freqs[np.where(energy_cumsum >= 0.9 * energy_cumsum[-1])[0][0]]
     
     meds_normal[digit, :] = np.median(dft_data_normal, axis=0)
     meds_flattop[digit, :] = np.median(dft_data_flattop, axis=0)
@@ -134,7 +131,7 @@ plot_spectrum(frequencies, q25_flattop, meds_flattop, q75_flattop, 'Flat Top Win
 plot_spectrum(frequencies, q25_blackman, meds_blackman, q75_blackman, 'Blackman Window')
 plot_spectrum(frequencies, q25_hamming, meds_hamming, q75_hamming, 'Hamming Window')
 
-# Boxplots for entropies, SEFS, and spectral contrast
+# Boxplots for entropies, and spectral contrast
 def plot_boxplot(data, title, xlabel, ylabel):
     plt.figure()
     plt.boxplot(data.T, labels=[str(i) for i in range(num_digits)])
@@ -144,7 +141,6 @@ def plot_boxplot(data, title, xlabel, ylabel):
     plt.show()
 
 plot_boxplot(entropies, 'Spectral Entropies', 'Digit', 'Entropy')
-plot_boxplot(SEFS, 'Spectral Edge Frequencies (SEF90)', 'Digit', 'SEF90 (Hz)')
 plot_boxplot(spectral_contrast, 'Spectral Contrast', 'Digit', 'Spectral Contrast')
 
 # 3D Scatter plot
@@ -153,11 +149,11 @@ ax = fig.add_subplot(111, projection='3d')
 colors = plt.cm.tab10.colors
 
 for i in range(num_digits):
-    ax.scatter(entropies[i, :], spectral_contrast[i, :], SEFS[i, :], color=colors[i], label=f'Digit {i}')
+    ax.scatter(entropies[i, :], spectral_contrast[i, :], relative_power[i, :], color=colors[i], label=f'Digit {i}')
 
 ax.set_xlabel('Spectral Entropy')
 ax.set_ylabel('Spectral Contrast')
-ax.set_zlabel('SEF90 (Hz)')
+ax.set_zlabel('Relative Power')
 ax.set_title('3D Scatter Plot')
 plt.legend()
 plt.show()
